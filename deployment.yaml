@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kubernetes-cd-example
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: kubernetes-cd-example
+  template:
+    metadata:
+      labels:
+        app: kubernetes-cd-example
+    spec:
+      containers:
+      - name: app
+        image: <account-id>.dkr.ecr.<region>.amazonaws.com/kubernetes-cd-example:latest
+        ports:
+        - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kubernetes-cd-service
+spec:
+  selector:
+    app: kubernetes-cd-example
+  ports:
+  - port: 80
+    targetPort: 3000
+  type: LoadBalancer

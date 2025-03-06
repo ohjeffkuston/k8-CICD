@@ -26,9 +26,6 @@ jspm_packages/
 # MacOS
 .DS_Store
 
-# Kubernetes
-*.yaml
-*.yml
 
 # Docker
 .dockerignore
@@ -46,3 +43,4 @@ docker-compose.override.yml
 *.swo
 *.bak
 *.tmp
+/lambda-deploy
