@@ -1,0 +1,68 @@
+{
+    "pipeline": {
+        "name": "kubernetes-cd-pipeline",
+        "roleArn": "<pipeline-role-arn>",
+        "artifactStore": {
+            "type": "S3",
+            "location": "<s3-bucket-name>"
+        },
+        "stages": [
+            {
+                "name": "Source",
+                "actions": [
+                    {
+                        "name": "Source",
+                        "actionTypeId": {
+                            "category": "Source",
+                            "owner": "AWS",
+                            "provider": "CodeCommit",
+                            "version": "1"
+                        },
+                        "outputArtifacts": [{ "name": "SourceArtifact" }],
+                        "configuration": {
+                            "BranchName": "main",
+                            "RepositoryName": "kubernetes-cd-example"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "Build",
+                "actions": [
+                    {
+                        "name": "Build",
+                        "actionTypeId": {
+                            "category": "Build",
+                            "owner": "AWS",
+                            "provider": "CodeBuild",
+                            "version": "1"
+                        },
+                        "inputArtifacts": [{ "name": "SourceArtifact" }],
+                        "outputArtifacts": [{ "name": "BuildArtifact" }],
+                        "configuration": {
+                            "ProjectName": "kubernetes-cd-build"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "Deploy",
+                "actions": [
+                    {
+                        "name": "Deploy",
+                        "actionTypeId": {
+                            "category": "Invoke",
+                            "owner": "AWS",
+                            "provider": "Lambda",
+                            "version": "1"
+                        },
+                        "inputArtifacts": [{ "name": "BuildArtifact" }],
+                        "configuration": {
+                            "FunctionName": "kubernetes-deploy"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}
